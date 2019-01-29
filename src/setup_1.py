@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.contour import ContourSet
 import matplotlib.cm as cm
 import numpy as np
+from Graph import Graph
 
 class factory():
     def __init__(self):
@@ -19,11 +20,16 @@ class factory():
         line_bounds = [[[self.bounds[0],self.bounds[2]],[self.bounds[0],self.bounds[3]],[self.bounds[1],self.bounds[3]],[self.bounds[1],self.bounds[2]],[self.bounds[0],self.bounds[2]]]]
         self.walls = [lines0,lines1,lines2,line_bounds]
 
-    def plot_floor(self):
+        #This is the graph object we will deal with
+        self.mrpp_graph = {}
+
+    def plot_floor(self,graph=False):
 
         # the axes attributes need to be set before the call to subplot
         fig = plt.figure()
 
+        if graph:
+            plt.subplot(2,1,1)
 
         plt.title('Factory')
 
@@ -34,26 +40,45 @@ class factory():
         plt.yticks(np.arange(self.bounds[2], self.bounds[3]+1, step=1))
         plt.grid(True)
 
+        self.plot_machines()
+        self.plot_walls()
+        self.plot_robots()
+
+
+
+        if graph:
+            plt.subplot(2,1,2)
+            plt.axis('scaled')
+            plt.xlim((self.bounds[0], self.bounds[1]))
+            plt.ylim((self.bounds[2], self.bounds[3]))
+            plt.xticks(np.arange(self.bounds[0], self.bounds[1] + 1, step=1))
+            plt.yticks(np.arange(self.bounds[2], self.bounds[3] + 1, step=1))
+            plt.grid(False)
+
+            self.plot_machines()
+            self.plot_walls()
+
+
+        plt.show()
+
+    def plot_machines(self):
         # -------------------- Plotting machines in red ---------------------- #
-        machine_plots = []
         for mymachine in self.machines:
             m = ContourSet(plt.gca(), [0, 1], [[mymachine.shape]], filled=True, colors='r')
             plt.scatter(mymachine.access_point[0], mymachine.access_point[1], s=10, marker=(3, 0, 180), c='r')
-            machine_plots += [m]
         # -------------------------------------------------------------------- #
 
+    def plot_walls(self):
         # Contour lines (non-filled).
         lines = ContourSet(plt.gca(), np.arange(len(self.walls)), self.walls,
-                           linewidths=3,colors='k')
+                           linewidths=3, colors='k')
 
+    def plot_robots(self):
         # -------------------- Plotting robots in green ---------------------- #
-        robot_plots = []
         for myrobot in self.robots:
             m = ContourSet(plt.gca(), [0, 1], [[myrobot.shape]], filled=True, colors='g')
-            machine_plots += [m]
         # -------------------------------------------------------------------- #
 
-        plt.show()
 
 class obstacle():
     def __init__(self,shape,location):
@@ -98,4 +123,4 @@ class robot(obstacle):
 
 if __name__ == "__main__":
     Factory = factory()
-    Factory.plot_floor()
+    Factory.plot_floor(graph=True)
