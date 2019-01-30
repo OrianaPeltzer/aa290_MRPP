@@ -30,3 +30,6 @@ class graph():
             y = node[1]
             plt.scatter(x, y, s=20, marker=(5, 0, 180), c='b')
 
+def create_graph_factory1():
+    my_graph = graph()
+    edges =
