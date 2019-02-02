@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.contour import ContourSet
 import matplotlib.cm as cm
 import numpy as np
-from Graph import graph
+from Graph import graph, create_graph_factory1
 
 class factory():
     def __init__(self):
@@ -21,7 +21,7 @@ class factory():
         self.walls = [lines0,lines1,lines2,line_bounds]
 
         #This is the graph object we will deal with
-        self.mrpp_graph = graph()
+        self.mrpp_graph = create_graph_factory1()
 
     def plot_floor(self,graph=False):
 
@@ -57,6 +57,8 @@ class factory():
 
             self.plot_machines()
             self.plot_walls()
+
+            self.mrpp_graph.plot_in_factory()
 
 
         plt.show()
