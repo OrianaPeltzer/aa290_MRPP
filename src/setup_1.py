@@ -6,12 +6,13 @@ from matplotlib.contour import ContourSet
 import matplotlib.cm as cm
 import numpy as np
 from Graph import graph, create_graph_factory1
+from IPython import embed
 
 class factory():
     def __init__(self):
         self.robots = None
         self.bounds = np.array([0,30,0,10])
-        self.machines = [machine(),machine([10,4])]
+        self.machines = [machine(),machine([8,4])]
         self.robots = [robot([0,0]),robot([0,1])]
 
         lines0 = [[[0, 0], [0, 4]]]
@@ -126,3 +127,5 @@ class robot(obstacle):
 if __name__ == "__main__":
     Factory = factory()
     Factory.plot_floor(graph=True)
+    Factory.mrpp_graph.create_flow_problem()
+    embed()
