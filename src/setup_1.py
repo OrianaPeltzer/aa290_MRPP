@@ -10,7 +10,6 @@ from IPython import embed
 
 class factory():
     def __init__(self):
-        self.robots = None
         self.bounds = np.array([0,30,0,10])
         self.machines = [machine(),machine([8,4])]
         self.robots = [robot([0,0]),robot([0,1])]
@@ -24,7 +23,7 @@ class factory():
         #This is the graph object we will deal with
         self.mrpp_graph = create_graph_factory1()
 
-    def plot_floor(self,graph=False):
+    def plot_floor(self,graph=False,lines_to_plot=[]):
 
         # the axes attributes need to be set before the call to subplot
         fig = plt.figure()
@@ -45,6 +44,14 @@ class factory():
         self.plot_walls()
         self.plot_robots()
 
+        for line_tp in lines_to_plot:
+            x = line_tp[0][0] + 0.5
+            y = line_tp[0][1] + 0.5
+            xp = line_tp[1][0] + 0.5
+            yp = line_tp[1][1] + 0.5
+            line_to_plot = [(x, xp), (y, yp), 'r']
+            plt.plot(*line_to_plot)
+
 
 
         if graph:
@@ -62,7 +69,7 @@ class factory():
             self.mrpp_graph.plot_in_factory()
 
 
-        plt.show()
+        #plt.show()
 
     def plot_machines(self):
         # -------------------- Plotting machines in red ---------------------- #
@@ -79,8 +86,43 @@ class factory():
     def plot_robots(self):
         # -------------------- Plotting robots in green ---------------------- #
         for myrobot in self.robots:
-            m = ContourSet(plt.gca(), [0, 1], [[myrobot.shape]], filled=True, colors='g')
+            m = ContourSet(plt.gca(), [0, 1], [[myrobot.shape]], filled=True, colors=myrobot.color)
         # -------------------------------------------------------------------- #
+
+    def plot_flow_solution(self):
+        for t in range(self.mrpp_graph.time_horizon):
+            self.robots = []
+            for node_index in range(len(self.mrpp_graph.vertices)):
+                concerned_node = self.mrpp_graph.reverse_vertex_dict[node_index]
+                num_robots_in = self.mrpp_graph.blue_vars[node_index][t].x + self.mrpp_graph.sink_matrix[node_index,t]
+                if num_robots_in == 1:
+                    self.robots += [robot(location=concerned_node,color='g')]
+                elif num_robots_in == 2:
+                    self.robots += [robot(location=concerned_node,color='b')]
+            mylines =[]
+            for channel_tuple in self.mrpp_graph.channel_dict.keys():
+                channel_index = self.mrpp_graph.channel_dict[channel_tuple][0]
+                channel_time = self.mrpp_graph.channel_dict[channel_tuple][1]
+                channel_occupancy = 0
+                for t_ch in range(channel_time-1):
+                    if (t-t_ch) >= 0:
+                        channel_occupancy += self.mrpp_graph.channel_vars[channel_index][0,t-t_ch].x
+                        channel_occupancy += self.mrpp_graph.channel_vars[channel_index][1,t-t_ch].x
+                if channel_occupancy > 0:
+                    node1 = channel_tuple[0]
+                    node2 = channel_tuple[1]
+                    mylines += [[node1,node2]]
+
+
+
+
+            self.plot_floor(graph=True,lines_to_plot = mylines)
+
+            plt.text(19,5,"time: "+str(t))
+
+            plt.savefig("Plot_results/4/" + str(t) + ".png")
+            plt.close()
+
 
 
 class obstacle():
@@ -120,12 +162,14 @@ class wall(obstacle):
         obstacle.__init__(self, shape, location)
 
 class robot(obstacle):
-    def __init__(self,location=[3,5]):
+    def __init__(self,location=[3,5],color='g'):
         shape = ["circle", 1]
         obstacle.__init__(self, shape, location)
+        self.color = color
 
 if __name__ == "__main__":
     Factory = factory()
     Factory.plot_floor(graph=True)
     Factory.mrpp_graph.create_flow_problem()
-    embed()
+    Factory.plot_flow_solution()
+    #embed()
