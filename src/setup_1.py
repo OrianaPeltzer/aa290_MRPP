@@ -120,10 +120,8 @@ class factory():
 
             plt.text(19,5,"time: "+str(t))
 
-            plt.savefig("Plot_results/4/" + str(t) + ".png")
+            #plt.savefig("Plot_results/4/" + str(t) + ".png")
             plt.close()
-
-
 
 class obstacle():
     def __init__(self,shape,location):
@@ -148,7 +146,6 @@ class obstacle():
             self.shape = polygon
         return
 
-
 class machine(obstacle):
     def __init__(self,location=[3,5]):
         shape = ["rectangle",[1,1]]
@@ -166,6 +163,8 @@ class robot(obstacle):
         shape = ["circle", 1]
         obstacle.__init__(self, shape, location)
         self.color = color
+
+
 
 if __name__ == "__main__":
     Factory = factory()
