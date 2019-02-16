@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6be5051d-50b4-4afa-be2b-89dd27ecacc1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/random_factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gurobi.log" beforeDir="false" afterPath="$PROJECT_DIR$/src/gurobi.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/setup_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/setup_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/random_experiments.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/random_experiments.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +30,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/gurobi_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1083">
+            <state relative-caret-position="858">
               <caret line="99" column="12" lean-forward="true" selection-start-line="99" selection-start-column="12" selection-end-line="99" selection-end-column="12" />
             </state>
           </provider>
@@ -42,9 +39,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/setup_1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="35" lean-forward="true" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+            <state relative-caret-position="930">
+              <caret line="71" column="9" selection-start-line="71" selection-start-column="9" selection-end-line="71" selection-end-column="9" />
               <folding>
+                <element signature="e#79#110#0" expanded="true" />
                 <element signature="e#4898#5612#0" />
                 <element signature="e#5644#5834#0" />
                 <element signature="e#5862#5992#0" />
@@ -55,10 +53,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/random_factory.py">
+        <entry file="file://$PROJECT_DIR$/src/random_experiments.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+            <state relative-caret-position="345">
+              <caret line="23" column="65" lean-forward="true" selection-start-line="23" selection-start-column="65" selection-end-line="23" selection-end-column="65" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -84,6 +85,7 @@
         <option value="$PROJECT_DIR$/src/Graph.py" />
         <option value="$PROJECT_DIR$/src/setup_1.py" />
         <option value="$PROJECT_DIR$/src/random_factory.py" />
+        <option value="$PROJECT_DIR$/src/random_experiments.py" />
       </list>
     </option>
   </component>
@@ -119,6 +121,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -132,7 +135,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.setup_1 (1)">
+  <component name="RunManager" selected="Python.random_experiments">
     <configuration name="gurobi_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="aa290_MRPP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,6 +149,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/gurobi_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="random_experiments" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="aa290_MRPP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/random_experiments.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -198,6 +222,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.random_experiments" />
         <item itemvalue="Python.setup_1 (1)" />
         <item itemvalue="Python.gurobi_test" />
         <item itemvalue="Python.setup_1" />
@@ -253,9 +278,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/random_factory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/gurobi_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1083">
+        <state relative-caret-position="858">
           <caret line="99" column="12" lean-forward="true" selection-start-line="99" selection-start-column="12" selection-end-line="99" selection-end-column="12" />
         </state>
       </provider>
@@ -275,9 +307,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/setup_1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="35" lean-forward="true" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+        <state relative-caret-position="930">
+          <caret line="71" column="9" selection-start-line="71" selection-start-column="9" selection-end-line="71" selection-end-column="9" />
           <folding>
+            <element signature="e#79#110#0" expanded="true" />
             <element signature="e#4898#5612#0" />
             <element signature="e#5644#5834#0" />
             <element signature="e#5862#5992#0" />
@@ -286,10 +319,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/random_factory.py">
+    <entry file="file://$PROJECT_DIR$/src/random_experiments.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+        <state relative-caret-position="345">
+          <caret line="23" column="65" lean-forward="true" selection-start-line="23" selection-start-column="65" selection-end-line="23" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
