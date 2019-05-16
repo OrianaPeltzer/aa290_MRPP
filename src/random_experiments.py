@@ -2,6 +2,8 @@ import numpy as np
 from setup_1 import *
 import matplotlib.pyplot as plt
 
+# Only for factory cases
+
 def create_random_factory(obstacle_density, robot_density,factory_size):
     """Creates a square gridded factory with obstacles as blocks randomly placed"""
 

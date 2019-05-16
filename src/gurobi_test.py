@@ -14,6 +14,7 @@
 #   http://www.solver.com/disfacility.htm
 # Used with permission.
 
+
 from gurobipy import *
 
 # Warehouse demand in thousands of units
