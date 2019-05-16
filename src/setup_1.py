@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 from matplotlib.contour import ContourSet
 import matplotlib.cm as cm
 import numpy as np
-from Graph import graph, create_graph_factory1
+from Graph import graph, create_graph_factory1, create_dense_graph
 from IPython import embed
 
 class factory():
-    def __init__(self):
+    def __init__(self,graph=None):
         self.bounds = np.array([0,30,0,10])
         self.machines = [machine(),machine([8,4])]
         self.robots = [robot([0,0]),robot([0,1])]
@@ -21,7 +21,10 @@ class factory():
         self.walls = [lines0,lines1,lines2,line_bounds]
 
         #This is the graph object we will deal with
-        self.mrpp_graph = create_graph_factory1()
+        if graph == None:
+            self.mrpp_graph = create_graph_factory1()
+        else:
+            self.mrpp_graph = graph
 
     def plot_floor(self,graph=False,lines_to_plot=[]):
 
@@ -120,7 +123,7 @@ class factory():
 
             plt.text(19,5,"time: "+str(t))
 
-            #plt.savefig("Plot_results/4/" + str(t) + ".png")
+            plt.savefig("Plot_results/5/" + str(t) + ".png")
             plt.close()
 
 class obstacle():
@@ -167,8 +170,12 @@ class robot(obstacle):
 
 
 if __name__ == "__main__":
-    Factory = factory()
-    Factory.plot_floor(graph=True)
-    Factory.mrpp_graph.create_flow_problem()
+    mygraph = create_dense_graph()
+    Factory = factory(graph=mygraph)
+    Factory.plot_floor(graph=False)
+    sources,sinks = random_scenario(mygraph)
+    #sources = [((1,1),1,0),((1,5),1,0),((3,3),1,0),((8,2),1,0),((3,9),1,0)]
+    #sinks = [((9,9),1,19),((3,5),1,19),((6,1),1,19),((7,2),1,19),((8,8),1,19)]
+    Factory.mrpp_graph.create_flow_problem(sources=sources,sinks=sinks)
     Factory.plot_flow_solution()
     #embed()

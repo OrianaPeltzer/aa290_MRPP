@@ -350,3 +350,22 @@ def create_graph_factory1():
     my_graph.add_edges_implicitly_bidirectional(edges)
     my_graph.define_vertices(list_of_vertices)
     return my_graph
+
+def create_dense_graph():
+    """Creates 10x10 grid graph"""
+    my_graph = graph()
+    list_of_vertices = []
+    edges = []
+    for x in range(1,11):
+        for y in range(1,11):
+            list_of_vertices += [((x,y),1)]
+            if x != 10:
+                right_edge = ((x,y),(x+1,y),1,1)
+                edges += [right_edge]
+            if y != 10:
+                upper_edge = ((x,y),(x,y+1),1,1)
+                edges += [upper_edge]
+    my_graph.add_edges_implicitly_bidirectional(edges)
+    my_graph.define_vertices(list_of_vertices)
+    return my_graph
+
