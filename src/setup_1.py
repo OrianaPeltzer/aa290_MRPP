@@ -9,16 +9,20 @@ from Graph import graph, create_graph_factory1, create_dense_graph
 from IPython import embed
 
 class factory():
-    def __init__(self,graph=None):
+    def __init__(self,graph=None,machine_sinks=[]):
         self.bounds = np.array([0,30,0,10])
-        self.machines = [machine(),machine([8,4])]
+        self.machines = []
+        for sink in machine_sinks:
+            self.machines += [machine([sink[0][0],sink[0][1]])]
+        #self.machines = [machine(),machine([8,4])]
         self.robots = [robot([0,0]),robot([0,1])]
 
-        lines0 = [[[0, 0], [0, 4]]]
-        lines1 = [[[4, 6], [6, 6], [12, 6]]]
-        lines2 = [[[3, 0], [3, 2]], [[3, 3], [3, 4]]]
+        #lines0 = [[[0, 0], [0, 4]]]
+        #lines1 = [[[4, 6], [6, 6], [12, 6]]]
+        #lines2 = [[[3, 0], [3, 2]], [[3, 3], [3, 4]]]
         line_bounds = [[[self.bounds[0],self.bounds[2]],[self.bounds[0],self.bounds[3]],[self.bounds[1],self.bounds[3]],[self.bounds[1],self.bounds[2]],[self.bounds[0],self.bounds[2]]]]
-        self.walls = [lines0,lines1,lines2,line_bounds]
+        #self.walls = [lines0,lines1,lines2,line_bounds]
+        self.walls = [line_bounds]
 
         #This is the graph object we will deal with
         if graph == None:
@@ -119,7 +123,7 @@ class factory():
 
 
 
-            self.plot_floor(graph=True,lines_to_plot = mylines)
+            self.plot_floor(graph=False,lines_to_plot = mylines)
 
             plt.text(19,5,"time: "+str(t))
 
@@ -171,11 +175,12 @@ class robot(obstacle):
 
 if __name__ == "__main__":
     mygraph = create_dense_graph()
-    Factory = factory(graph=mygraph)
+    sources = [((1, 1), 1, 0), ((1, 5), 1, 0), ((3, 3), 1, 0), ((8, 2), 1, 0), ((3, 9), 1, 0),((7, 6), 1, 0),((9, 5), 1, 0),((8, 4), 1, 0),((8, 5), 1, 0),((8, 6), 1, 0)]
+    sinks = [((1, 9), 1, 19), ((3, 5), 1, 19), ((5, 8), 1, 19), ((2, 5), 1, 19), ((8, 8), 1, 19),((5, 1), 1, 19),((6, 6), 1, 19),((1, 8), 1, 19),((3, 1), 1, 19),((4, 1), 1, 19)]
+    Factory = factory(graph=mygraph,machine_sinks=sinks)
     Factory.plot_floor(graph=False)
-    sources,sinks = random_scenario(mygraph)
-    #sources = [((1,1),1,0),((1,5),1,0),((3,3),1,0),((8,2),1,0),((3,9),1,0)]
-    #sinks = [((9,9),1,19),((3,5),1,19),((6,1),1,19),((7,2),1,19),((8,8),1,19)]
-    Factory.mrpp_graph.create_flow_problem(sources=sources,sinks=sinks)
+    #sources,sinks = random_scenario(mygraph)
+    #Factory.mrpp_graph.create_flow_problem(sources=sources,sinks=sinks)
+    Factory.mrpp_graph.create_perturbed_flow_problem(sources=sources, sinks=sinks)
     Factory.plot_flow_solution()
     #embed()
