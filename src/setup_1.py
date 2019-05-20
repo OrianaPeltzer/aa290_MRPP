@@ -182,5 +182,7 @@ if __name__ == "__main__":
     #sources,sinks = random_scenario(mygraph)
     #Factory.mrpp_graph.create_flow_problem(sources=sources,sinks=sinks)
     Factory.mrpp_graph.create_perturbed_flow_problem(sources=sources, sinks=sinks)
-    Factory.plot_flow_solution()
+    path = Factory.mrpp_graph.solution_to_labeled_path()
+    print(path)
+    #Factory.plot_flow_solution()
     #embed()

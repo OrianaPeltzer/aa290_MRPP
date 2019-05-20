@@ -12,6 +12,9 @@ class graph():
     def __init__(self):
         self.g = {}
 
+        # For extracting paths later on
+        self.occupancy_dict = {}
+
     def add_edges_bidirectional(self, edges):
         """ edges is a list of tuples (vertex1, vertex2, cost, capacity)"""
         for edge in edges:
@@ -342,8 +345,6 @@ class graph():
         self.time_horizon = time_horizon
 
 
-
-
         # ------------------------------- CHANNEL VARIABLES AND CONSTRAINTS ------------------------------------------ #
 
 
@@ -378,13 +379,6 @@ class graph():
                     # k should always be 0 except when we have two edges in parallel
 
                     self.channel_dict[(node1, node2,k)] = (copy.deepcopy(channel_counter),t_edge, capacity)
-
-                    ##Now let's add to the channel dictionary indexed by edge time
-                    #try:
-                    #    self.channel_by_time_dict[t_edge] += [copy.deepcopy(channel_counter)]
-                    #except:
-                    #    self.channel_by_time_dict[t_edge] = [copy.deepcopy(channel_counter)]
-
 
                     self.channel_vars += [self.m.addVars(2,time_horizon+t_edge,lb=0.0,ub=capacity+0.1, vtype=GRB.INTEGER,name="channel"+str(channel_counter))]
                     # The capacity+0.1 is just to make sure not to have problems in case the bound is exclusive
@@ -469,13 +463,13 @@ class graph():
         # ----------------------------------- Source and sink matrix creation ---------------------------------------- #
         # We do this here since now we have an indexing for nodes and we can incorporate our source/sink terms in 2x2
         # matrices.
-        source_matrix = np.zeros((len(self.vertices), time_horizon))
+        self.source_matrix = np.zeros((len(self.vertices), time_horizon))
         self.sink_matrix = np.zeros((len(self.vertices), time_horizon))
 
         for source_term in sources:
             # source_term is a tuple (node,num_robots,time)
             source_node_index = self.vertex_dict[source_term[0]]
-            source_matrix[source_node_index,source_term[2]] = source_term[1]
+            self.source_matrix[source_node_index,source_term[2]] = source_term[1]
 
         # For objective purposes let's also store the sink term indexes and num_robots in a dict
         sink_dict={}
@@ -510,7 +504,7 @@ class graph():
                     departure_indicator = ch_t[1]
                     departure_constraint += self.channel_vars[ch_idx][departure_indicator,t]
 
-                self.m.addConstr(departure_constraint == source_matrix[node_index,t],
+                self.m.addConstr(departure_constraint == self.source_matrix[node_index,t],
                                  name="departure_constraint_node"+str(node_index)+"_t"+str(t))
                 # ---------------------------------------------------------------------------------- #
 
@@ -582,7 +576,6 @@ class graph():
         print("Advance over predicted arrival time: "+str(self.m.objVal))
         #embed()
 
-
     def get_neighbor_channel_indexes(self,node):
         # First we go through the original dictionary of edges
         channel_indexes = []
@@ -600,6 +593,129 @@ class graph():
                 channel_indexes += [(ch_idx,1,t_edge)]
 
         return channel_indexes
+
+    def solution_to_labeled_path(self):
+        """From a solution this returns the corresponding sequence of nodes and edges for each robot to take.
+        Note that there are several possible xs for one possible solution, and that we can't trace back to the path
+        from the output of this function."""
+        solution = []
+
+        # The way we will extract paths here is by tracking each agent from the beginning.
+
+        # First, we get the starting positions by scanning the source matrix.
+        for kv in range(np.shape(self.source_matrix)[0]):
+            for kt in range(np.shape(self.source_matrix)[1]):
+                if self.source_matrix[kv][kt] != 0:
+                    path = self.extract_path_from(kv,kt)
+                    solution += [path]
+
+        return solution
+
+    def extract_path_from(self,vertex_index,time_index):
+        """Note that vertex index is not the id of the vertex and that vertex_dict and its reciprocal are here to
+        manage that."""
+        path = []
+
+        v_idx = vertex_index
+        t = time_index
+
+
+        #we are looking for the first path that starts with vertex v after time t
+        while True:
+
+            # Prepare variables
+            current_vertex = self.vertices[v_idx]
+            node_id = current_vertex[0]
+            capacity = current_vertex[1]
+            count = 0
+
+            # If the capacity is >= 2 we may have dealt with the following path before
+            if capacity > 1:
+                try:
+                    count = self.occupancy_dict[(v_idx, t)]
+                except:
+                    count = 0
+                self.occupancy_dict[(v_idx, t)] = count
+
+
+
+            # We need v_idx and t (or just t) to be updated at each iteration.
+            try:
+
+
+                #Let's start by scanning the next possibilities for channels
+                # Inefficient method:
+                found = False
+                for(ch_idx,channel) in enumerate(self.channel_dict.keys()):
+
+                    if channel[0] == node_id:
+                        channel_index = self.channel_dict[channel][0]
+                        channel_var = self.channel_vars[channel_index][0,t].x #var 0: from u to v
+
+                        if channel_var > 0: #At least an agent enters this edge at t
+                            if count < channel_var: #We have counted k already but there are more than k occupants here
+                                path += [(channel[0],channel[1])]
+                                count += 1
+                                try:
+                                    self.occupancy_dict[(v_idx, t)] = self.occupancy_dict[(v_idx, t)] + 1
+                                except:
+                                    pass
+
+                                t_edge = self.channel_dict[channel][1]
+
+                                # Our next search only needs to be at t + t_edge
+                                t += t_edge
+                                #Next node to look at
+                                v_idx = self.vertex_dict[channel[1]]
+
+                                #Get out of the inner for loop
+                                found = True
+                                break
+                            else:
+                                #We have counted k, here we find m robots leaving with m < k.
+                                count += channel_var
+
+                    elif channel[1] == node_id: #Reverse direction
+                        channel_index = self.channel_dict[channel][0]
+                        channel_var = self.channel_vars[channel_index][1, t].x  # var 1: from v to u
+
+                        if channel_var > 0:  # At least an agent enters this edge at t
+                            if count < channel_var:  # We have counted k already but there are more than k occupants here
+                                path += [(channel[1], channel[0])]
+                                count += 1
+                                try:
+                                    self.occupancy_dict[(v_idx, t)] = self.occupancy_dict[(v_idx, t)] + 1
+                                except:
+                                    pass
+
+                                t_edge = self.channel_dict[channel][1]
+
+                                # Our next search only needs to be at t + t_edge
+                                t += t_edge
+                                # Next node to look at
+                                v_idx = self.vertex_dict[channel[0]] #The next vertex to look at is the first
+
+                                # Get out of the inner for loop
+                                found = True
+                                break
+                            else:
+                                #We have counted k, here we find m robots leaving with m < k.
+                                count += channel_var
+                    # ----------------------------------------------------------------------------------------- #
+                # If we arrive here, we searched through all the channels.
+                if found == False:
+                    t += 1 #Search at the following time step
+
+
+
+
+
+
+            except:
+                break #This means that we are looking so much ahead in time that we can't access time index t anymore
+
+        return path
+
 
 
 
@@ -629,4 +745,3 @@ def create_dense_graph():
     my_graph.add_edges_implicitly_bidirectional(edges)
     my_graph.define_vertices(list_of_vertices)
     return my_graph
-
