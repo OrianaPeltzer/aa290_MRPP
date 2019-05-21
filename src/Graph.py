@@ -716,6 +716,61 @@ class graph():
 
         return path
 
+    def simulate_particles(self,solution,save=False):
+        """This function only works on a grid! Reason: we are able to do collision checking and delay the robots in function.
+        If we had 3s edges we won't know whether we can send our agent without it colliding at t+3"""
+        cost = 0
+        situation_t0 = [solution[agent][0][0] for agent in range(len(solution))] # All nodes at t0
+        finished = False
+        t = 0
+        situation_t = [[] for k in range(len(solution))]
+        final_situation = [solution[agent][-1][1] for agent in range(len(solution))]
+
+        while finished == False:
+            done = 0
+            # Go through all of the robots one by one at random and try to get them to the next step
+            indexes = np.random.shuffle(range(len(solution)))
+            for agent_index in indexes:
+                agent_next_vertex = solution[agent_index][t][1]
+                #First, with probability 1/5 we are not able to make it
+                p = np.random.uniform(0.0,1.0)
+                if p < 0.2:
+                    situation_t[agent_index] = situation_t0[agent_index]
+                    cost += 1
+                else:
+                    #Then we need to check whether there is someone at the node already
+                    possible = True
+                    for vertex in situation_t0:
+                        if agent_next_vertex == vertex:
+                            possible = False
+                    if possible:
+                        situation_t[agent_index] = agent_next_vertex
+                        if solution[agent_index][-1][1] != agent_next_vertex:
+                            cost += 1
+                        else:
+                            done += 1
+                    else:
+                        situation_t[agent_index] = situation_t0[agent_index]
+                        cost += 1
+            # Prepare for next iteration
+            t += 1
+            situation_t0 = situation_t
+
+            #Check for termination
+            if done >= len(solution):
+                finished = True
+
+        return cost
+
+    def get_solution_cost(self,solution,num_particles=100):
+        """Tests num_particles possible scenarios for this solution and returns the average cost per scenario"""
+        cost = 0
+        for k in range(num_particles):
+            cost += self.simulate_particles(solution)
+        cost = float(cost)/float(num_particles)
+        return cost
+
+
 
 
 
