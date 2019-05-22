@@ -94,7 +94,7 @@ class factory():
             m = ContourSet(plt.gca(), [0, 1], [[myrobot.shape]], filled=True, colors=myrobot.color)
         # -------------------------------------------------------------------- #
 
-    def plot_flow_solution(self):
+    def plot_flow_solution(self,savefig=True):
         for t in range(self.mrpp_graph.time_horizon):
             self.robots = []
             for node_index in range(len(self.mrpp_graph.vertices)):
@@ -122,9 +122,10 @@ class factory():
             self.plot_floor(graph=False,lines_to_plot = mylines)
 
             plt.text(19,5,"time: "+str(t))
-
-            plt.savefig("Plot_results/5/" + str(t) + ".png")
+            if savefig:
+                plt.savefig("Plot_results/5/" + str(t) + ".png")
             plt.close()
+
 
 class obstacle():
     def __init__(self,shape,location):
