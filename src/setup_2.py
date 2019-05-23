@@ -18,9 +18,9 @@ from sklearn.pipeline import make_pipeline
 if __name__ == "__main__":
 
     #Hyperparameters---
-    degree = 1 # Degree of polynomial to fit. This is a linear regression - actually a degree more than 1 is nonesense
-    num_training_samples = 1000 # number of samples to generate before fitting
-    num_testing_samples = 20 # number of samples to test our model on
+    degree = 1 # Degree of polynomial to fit.
+    num_training_samples = 500 # number of samples to generate before fitting
+    num_testing_samples = 10 # number of samples to test our model on
 
     # Create graph
     mygraph = create_dense_graph()
@@ -88,16 +88,40 @@ if __name__ == "__main__":
     Y = np.array(Y)
 
     # Prepare model
-    model = make_pipeline(PolynomialFeatures(degree), RidgeCV(alphas=np.linspace(0.01, 10, 10)))
+    #model = make_pipeline(PolynomialFeatures(degree,interaction_only=True), RidgeCV(alphas=np.linspace(0.01, 10, 10)))
+    model = make_pipeline(PolynomialFeatures(degree, interaction_only=True), RidgeCV(alphas=[1]))
 
     # Fit model
+    print("Fitting Model")
     result = model.fit(X,Y)
+    print("Model Fit")
 
     # Get score of the model on training data
     score = result.score(X,Y)
 
     # Get score of the model on test data
     test_score = result.score(X_test,Y_test)
+
+    # # Get convergence plot
+    # training_scores = []
+    # test_scores = []
+    # ks = []
+    # for k in range(1,num_training_samples,int(num_training_samples/100)+1):
+    #     result = model.fit(X[:k],Y[:k])
+    #     training_score = result.score(X[:k],Y[:k])
+    #     test_score = result.score(X_test,Y_test)
+    #     training_scores += [training_score]
+    #     test_scores += [test_score]
+    #     ks += [k]
+    #
+    # plt.close()
+    # plt.plot(ks,training_scores)
+    # plt.plot(ks,test_scores)
+    # plt.legend(["Training", "Testing"])
+    # plt.title("Convergence Plot for training dataset")
+    # plt.xlabel("Number of training samples")
+    # plt.ylabel("Score")
+    # plt.show()
 
     # Extract all coefficients one by one --------------------
 
@@ -112,10 +136,27 @@ if __name__ == "__main__":
         except:
             pass
         coeffs += [model.predict(x)]
-        embed()
         if k%100==0:
             print(k, " over ", len(X[0]))
     # -------------------------------------------------------
+
+    # Extract mean
+    mn = np.mean(coeffs)
+
+    # Find the important coefficient indexes
+    idxs = np.where([np.abs(k-mn) >= 0.001 for k in coeffs])[0]
+
+    # Reduce X using these indexes
+    X_reduced = [xb[idxs] for xb in X]
+
+    # Term to substract to Y in order to correspond to X_reduced
+    Y_reduced = []
+    for k,yb in enumerate(Y):
+        Ymm = yb - np.sum([mn*xelt for xelt in X[k]])
+        Y_reduced += [Ymm]
+
+    # Now we can attempt to fit second order polynomial model
+    embed()
 
     # Back to original model to get robust solution
     Factory.mrpp_graph.find_robust_solution(coeffs,sources=sources, sinks=sinks)
