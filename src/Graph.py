@@ -596,8 +596,6 @@ class graph():
         self.time_horizon = time_horizon
 
 
-
-
         # ------------------------------- CHANNEL VARIABLES AND CONSTRAINTS ------------------------------------------ #
 
 

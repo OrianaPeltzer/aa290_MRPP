@@ -87,6 +87,9 @@ if __name__ == "__main__":
     X = np.array(X)
     Y = np.array(Y)
 
+    X_test = np.array(X_test)
+    Y_test = np.array(Y_test)
+
     # Prepare model
     #model = make_pipeline(PolynomialFeatures(degree,interaction_only=True), RidgeCV(alphas=np.linspace(0.01, 10, 10)))
     model = make_pipeline(PolynomialFeatures(degree, interaction_only=True), RidgeCV(alphas=[1]))
@@ -155,7 +158,48 @@ if __name__ == "__main__":
         Ymm = yb - np.sum([mn*xelt for xelt in X[k]])
         Y_reduced += [Ymm]
 
-    # Now we can attempt to fit second order polynomial model
+    # Reduce the test set
+    X_test_reduced = [xb[idxs] for xb in X_test]
+    Y_test_reduced = []
+    for k, yb in enumerate(Y_test):
+        Ymm = yb - np.sum([mn * xelt for xelt in X_test[k]])
+        Y_test_reduced += [Ymm]
+
+    # Turn data into numpy arrays
+    X_reduced = np.array(X_reduced)
+    Y_reduced = np.array(Y_reduced)
+
+    X_test_reduced = np.array(X_test_reduced)
+    Y_test_reduced = np.array(Y_test_reduced)
+
+    # Now we can attempt to fit second order polynomial model in reasonable time
+    model2 = make_pipeline(PolynomialFeatures(2, interaction_only=True), RidgeCV(alphas=[1]))
+
+    # Train with reduced data
+    result2 = model2.fit(X_reduced, Y_reduced)
+
+    # get score
+    test_score_2 = result2.score(X_test_reduced, Y_test_reduced)
+
+    # Extract polynomial coefficients one by one --------------
+    x = np.array([[0.0 for k in range(len(X_reduced[0]))]])
+    embed()
+    linearcoeffs = [model2.predict(x)]
+
+    for k in range(len(X_reduced[0])):
+        # add a 1 at the term that you want to extract
+        x[0][k] = 1.0
+        try:
+            x[0][k - 1] = 0.0
+        except:
+            pass
+        linearcoeffs += [model2.predict(x)]
+        if k % 100 == 0:
+            print(k, " over ", len(X_reduced[0]))
+    # -------------------------------------------------------
+
+
+
     embed()
 
     # Back to original model to get robust solution
