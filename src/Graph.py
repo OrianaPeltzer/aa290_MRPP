@@ -425,7 +425,7 @@ class graph():
                 # that takes value 0 with probability 1/5: at one time step, one channel has 20% chance being blocked.
                 p = np.random.uniform(0.0,1.0)
                 stochastic_obstacle=0
-                if p >= 0.2:
+                if p >= 0.3:
                     stochastic_obstacle=1
 
                 self.m.addConstr(channel_flow <= channel_capacity*stochastic_obstacle,name="channel_constraint_"+str(channel_index)+"_t"+str(t))
@@ -578,7 +578,7 @@ class graph():
         print("Advance over predicted arrival time: "+str(self.m.objVal))
         #embed()
 
-    def find_robust_solution(self,polynomialcoeffs,pw,idxs,sources=[((1,1),2,0)],sinks=[((3,6),1,19),((8,5),1,19)],time_horizon=20):
+    def find_robust_solution(self,polynomialcoeffs,sizex,idxs,sources=[((1,1),2,0)],sinks=[((3,6),1,19),((8,5),1,19)],time_horizon=20):
         """sources/sinks is a list of tuples (vertex,number of robots coming/going,time_index)
         time_horizon should be equal to the max time in the sinks list. Let's not spend time looking for
         the max and add it as input to the function directly"""
@@ -787,25 +787,43 @@ class graph():
         # ---------------------------------- OBJECTIVE FUNCTION ------------------------------- #
         print("Creating Objective")
         objective = QuadExpr()
+
         X_list = self.m.getVars()
-        #embed()
         X_list_reduced = [X_list[i] for i in idxs]
-        # for k,coef in enumerate(polynomialcoeffs):
-        #     nonzeroidxs = np.where([abs(pwo[0][i]-k)<0.01 for i in range(len(pwo[0]))])[0]
-        #     contribution = QuadExpr()
-        #     contribution += coef
-        #     for nzidx in nonzeroidxs:
-        #         contribution *= X_list[pwo[1][nzidx]]
-        #     objective += contribution
-        #embed()
-        prod = pw.dot(np.array(X_list_reduced,dtype='object'))
-        print("Product created. Integrating into objective")
-        objective += np.dot(polynomialcoeffs,prod)
+        Sigma = np.zeros((sizex, sizex))
+
+        linearterms = polynomialcoeffs[1:sizex+1]
+        objective += np.dot(linearterms,X_list_reduced)
+
+        k = sizex + 1
+        for i in range(sizex):
+            for j in range(i + 1, sizex):
+                Sigma[i, j] = polynomialcoeffs[k] / 2.0
+                Sigma[j, i] = polynomialcoeffs[k] / 2.0
+                k += 1
+
+        objective += np.dot(np.array(X_list_reduced).T,Sigma).dot(X_list_reduced)
+
+        # for dimension in range(sizex):
+        #     if dimension%100 == 0:
+        #         print(dimension, "over", sizex)
+        #
+        #     linearterms = polynomialcoeffs[1+(dimension+1)*sizex:1+(dimension+2)*sizex]
+        #
+        #     try:
+        #         objective += X_list_reduced[dimension+1]*np.dot(linearterms,X_list_reduced)
+        #     except:
+        #         embed()
+
+
         print("Objective created.")
         # --------------------------------------------------------------------------------------- #
 
         self.m.update()
         self.m.setObjective(objective, GRB.MINIMIZE)
+        self.m.update()
+
+        self.m.Params.TIME_LIMIT = 720.0
         self.m.update()
 
         print("Model fully defined. Starting optimization")

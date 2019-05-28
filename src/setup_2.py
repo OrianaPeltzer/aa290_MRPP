@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
     #Hyperparameters---
     degree = 1 # Degree of polynomial to fit.
-    num_training_samples = 500 # number of samples to generate before fitting
-    num_testing_samples = 50 # number of samples to test our model on
+    num_training_samples = 300 # number of samples to generate before fitting
+    num_testing_samples = 20 # number of samples to test our model on
 
     # Create graph
     mygraph = create_dense_graph()
@@ -108,26 +108,6 @@ if __name__ == "__main__":
     # Get score of the model on test data
     test_score = result.score(X_test,Y_test)
 
-    # # Get convergence plot
-    # training_scores = []
-    # test_scores = []
-    # ks = []
-    # for k in range(1,num_training_samples,int(num_training_samples/100)+1):
-    #     result = model.fit(X[:k],Y[:k])
-    #     training_score = result.score(X[:k],Y[:k])
-    #     test_score = result.score(X_test,Y_test)
-    #     training_scores += [training_score]
-    #     test_scores += [test_score]
-    #     ks += [k]
-    #
-    # plt.close()
-    # plt.plot(ks,training_scores)
-    # plt.plot(ks,test_scores)
-    # plt.legend(["Training", "Testing"])
-    # plt.title("Convergence Plot for training dataset")
-    # plt.xlabel("Number of training samples")
-    # plt.ylabel("Score")
-    # plt.show()
 
     # Extract all coefficients one by one --------------------
     # Get them all at once!
@@ -143,19 +123,11 @@ if __name__ == "__main__":
     # Reduce X using these indexes
     X_reduced = [xb[idxs] for xb in X]
 
-    # Term to substract to Y in order to correspond to X_reduced
-    # Y_reduced = []
-    # for k,yb in enumerate(Y):
-    #     Ymm = yb - np.sum([mn*xelt for xelt in X[k]])
-    #     Y_reduced += [Ymm]
     Y_reduced = Y
 
     # Reduce the test set
     X_test_reduced = [xb[idxs] for xb in X_test]
-    # Y_test_reduced = []
-    # for k, yb in enumerate(Y_test):
-    #     Ymm = yb - np.sum([mn * xelt for xelt in X_test[k]])
-    #     Y_test_reduced += [Ymm]
+
     Y_test_reduced = Y_test
 
     # Turn data into numpy arrays
@@ -184,17 +156,21 @@ if __name__ == "__main__":
     # pwo is such that no matter i, pw[pwo[0][i]][pwo[1][i]] = 1 and all the other terms are 0
     pwo = pw.nonzero()
 
+    sizex = len(X_reduced[0])
+
 
     # Back to original model to get robust solution
     print("Searching for robust solution")
     #embed()
-    Factory.mrpp_graph.find_robust_solution(polycoeffs,pw,idxs,sources=sources, sinks=sinks)
+    Factory.mrpp_graph.find_robust_solution(polycoeffs,sizex,idxs,sources=sources, sinks=sinks)
 
     # Extract variables
     xR = Factory.mrpp_graph.get_x()
 
     # Extract expected cost yR
     solution_R, yR = Factory.mrpp_graph.get_solution_cost(num_particles=100)
+
+    Factory.plot_flow_solution()
 
     embed()
 

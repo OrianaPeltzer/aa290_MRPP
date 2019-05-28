@@ -123,7 +123,7 @@ class factory():
 
             plt.text(19,5,"time: "+str(t))
             if savefig:
-                plt.savefig("Plot_results/5/" + str(t) + ".png")
+                plt.savefig("Plot_results/7/" + str(t) + ".png")
             plt.close()
 
 
