@@ -4,6 +4,8 @@ from gurobipy import *
 import numpy as np
 import copy
 from IPython import embed
+from scipy.sparse import csr_matrix as csr
+from scipy.sparse import csr_matrix
 
 class graph():
     """ This unidirected graph has vertexes and edges. Each edge has a cost and a capacity.
@@ -576,7 +578,7 @@ class graph():
         print("Advance over predicted arrival time: "+str(self.m.objVal))
         #embed()
 
-    def find_robust_solution(self,coeffs,sources=[((1,1),2,0)],sinks=[((3,6),1,19),((8,5),1,19)],time_horizon=20):
+    def find_robust_solution(self,polynomialcoeffs,pw,idxs,sources=[((1,1),2,0)],sinks=[((3,6),1,19),((8,5),1,19)],time_horizon=20):
         """sources/sinks is a list of tuples (vertex,number of robots coming/going,time_index)
         time_horizon should be equal to the max time in the sinks list. Let's not spend time looking for
         the max and add it as input to the function directly"""
@@ -783,24 +785,33 @@ class graph():
         self.m.update()
 
         # ---------------------------------- OBJECTIVE FUNCTION ------------------------------- #
-
-        objective = LinExpr()
-        for k,var in enumerate(self.m.getVars()):
-            objective += coeffs[k+1][0]*var #We don't need the first constant coeff in the objective since we are minimizing
-
+        print("Creating Objective")
+        objective = QuadExpr()
+        X_list = self.m.getVars()
+        #embed()
+        X_list_reduced = [X_list[i] for i in idxs]
+        # for k,coef in enumerate(polynomialcoeffs):
+        #     nonzeroidxs = np.where([abs(pwo[0][i]-k)<0.01 for i in range(len(pwo[0]))])[0]
+        #     contribution = QuadExpr()
+        #     contribution += coef
+        #     for nzidx in nonzeroidxs:
+        #         contribution *= X_list[pwo[1][nzidx]]
+        #     objective += contribution
+        #embed()
+        prod = pw.dot(np.array(X_list_reduced,dtype='object'))
+        print("Product created. Integrating into objective")
+        objective += np.dot(polynomialcoeffs,prod)
+        print("Objective created.")
         # --------------------------------------------------------------------------------------- #
 
         self.m.update()
         self.m.setObjective(objective, GRB.MINIMIZE)
         self.m.update()
 
-        #embed()
-
         print("Model fully defined. Starting optimization")
         self.m.optimize()
         print("Done optimizing.")
         print("Advance over predicted arrival time: "+str(self.m.objVal))
-        #embed()
 
 
     def get_neighbor_channel_indexes(self,node):

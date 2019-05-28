@@ -8,10 +8,11 @@ import numpy as np
 from Graph import graph, create_graph_factory1, create_dense_graph
 from create_setup import factory, obstacle, machine, wall, robot
 from IPython import embed
+from scipy.sparse import csr_matrix
 import copy
 
 # Sklearn
-from sklearn.linear_model import RidgeCV
+from sklearn.linear_model import RidgeCV, LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     #Hyperparameters---
     degree = 1 # Degree of polynomial to fit.
     num_training_samples = 500 # number of samples to generate before fitting
-    num_testing_samples = 10 # number of samples to test our model on
+    num_testing_samples = 50 # number of samples to test our model on
 
     # Create graph
     mygraph = create_dense_graph()
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     solution_0,y0 = Factory.mrpp_graph.get_solution_cost(num_particles=100)
 
     # ----------------- Sample num_samples perturbed problems and get their costs ------------------------
-    X = [x0] # Training data
+    X = [x0[:11560]] # Training data
     Y = [y0]
     paths=[solution_0]
 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
         # Sample new point
         Factory.mrpp_graph.create_perturbed_flow_problem(sources=sources, sinks=sinks)
         x = Factory.mrpp_graph.get_x()
+        x = x[:11560]
         solutionpath, y = Factory.mrpp_graph.get_solution_cost(num_particles=100)
 
         # Did we already use this point?
@@ -94,6 +96,7 @@ if __name__ == "__main__":
     #model = make_pipeline(PolynomialFeatures(degree,interaction_only=True), RidgeCV(alphas=np.linspace(0.01, 10, 10)))
     model = make_pipeline(PolynomialFeatures(degree, interaction_only=True), RidgeCV(alphas=[1]))
 
+
     # Fit model
     print("Fitting Model")
     result = model.fit(X,Y)
@@ -127,23 +130,11 @@ if __name__ == "__main__":
     # plt.show()
 
     # Extract all coefficients one by one --------------------
-
-    x = np.array([[0.0 for k in range(len(X[0]))]])
-    coeffs = [model.predict(x)]
-
-    for k in range(len(X[0])):
-        # add a 1 at the term that you want to extract
-        x[0][k] = 1.0
-        try:
-            x[0][k-1] = 0.0
-        except:
-            pass
-        coeffs += [model.predict(x)]
-        if k%100==0:
-            print(k, " over ", len(X[0]))
+    # Get them all at once!
+    coeffs = model.steps[1][1].coef_
     # -------------------------------------------------------
 
-    # Extract mean
+    # Extract mean: don't need it anymore, a lot of them are actually zero
     mn = np.mean(coeffs)
 
     # Find the important coefficient indexes
@@ -153,17 +144,19 @@ if __name__ == "__main__":
     X_reduced = [xb[idxs] for xb in X]
 
     # Term to substract to Y in order to correspond to X_reduced
-    Y_reduced = []
-    for k,yb in enumerate(Y):
-        Ymm = yb - np.sum([mn*xelt for xelt in X[k]])
-        Y_reduced += [Ymm]
+    # Y_reduced = []
+    # for k,yb in enumerate(Y):
+    #     Ymm = yb - np.sum([mn*xelt for xelt in X[k]])
+    #     Y_reduced += [Ymm]
+    Y_reduced = Y
 
     # Reduce the test set
     X_test_reduced = [xb[idxs] for xb in X_test]
-    Y_test_reduced = []
-    for k, yb in enumerate(Y_test):
-        Ymm = yb - np.sum([mn * xelt for xelt in X_test[k]])
-        Y_test_reduced += [Ymm]
+    # Y_test_reduced = []
+    # for k, yb in enumerate(Y_test):
+    #     Ymm = yb - np.sum([mn * xelt for xelt in X_test[k]])
+    #     Y_test_reduced += [Ymm]
+    Y_test_reduced = Y_test
 
     # Turn data into numpy arrays
     X_reduced = np.array(X_reduced)
@@ -181,29 +174,21 @@ if __name__ == "__main__":
     # get score
     test_score_2 = result2.score(X_test_reduced, Y_test_reduced)
 
-    # Extract polynomial coefficients one by one --------------
-    x = np.array([[0.0 for k in range(len(X_reduced[0]))]])
-    embed()
-    linearcoeffs = [model2.predict(x)]
+    # get coefficients
+    polycoeffs = model2.steps[1][1].coef_
 
-    for k in range(len(X_reduced[0])):
-        # add a 1 at the term that you want to extract
-        x[0][k] = 1.0
-        try:
-            x[0][k - 1] = 0.0
-        except:
-            pass
-        linearcoeffs += [model2.predict(x)]
-        if k % 100 == 0:
-            print(k, " over ", len(X_reduced[0]))
-    # -------------------------------------------------------
+    # Find to which terms these correspond to
+    pw = model2.steps[0][1].powers_
 
+    # The above matrix is very sparse. Let's get the non zero coefficients
+    # pwo is such that no matter i, pw[pwo[0][i]][pwo[1][i]] = 1 and all the other terms are 0
+    pwo = pw.nonzero()
 
-
-    embed()
 
     # Back to original model to get robust solution
-    Factory.mrpp_graph.find_robust_solution(coeffs,sources=sources, sinks=sinks)
+    print("Searching for robust solution")
+    #embed()
+    Factory.mrpp_graph.find_robust_solution(polycoeffs,pw,idxs,sources=sources, sinks=sinks)
 
     # Extract variables
     xR = Factory.mrpp_graph.get_x()
