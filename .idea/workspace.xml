@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6be5051d-50b4-4afa-be2b-89dd27ecacc1" name="Default Changelist" comment="added expected cost evaluation">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/create_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/create_setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/gurobi.log" beforeDir="false" afterPath="$PROJECT_DIR$/src/gurobi.log" afterDir="false" />
@@ -40,11 +39,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/create_setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1313">
-              <caret line="88" column="31" selection-start-line="88" selection-start-column="31" selection-end-line="88" selection-end-column="31" />
+            <state relative-caret-position="230">
+              <caret line="131" column="32" selection-start-line="131" selection-start-column="32" selection-end-line="131" selection-end-column="32" />
               <folding>
                 <element signature="e#49#80#0" expanded="true" />
-                <element signature="e#3614#5175#0" />
               </folding>
             </state>
           </provider>
@@ -59,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/setup_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+            <state relative-caret-position="680">
+              <caret line="140" column="38" selection-start-line="140" selection-start-column="38" selection-end-line="140" selection-end-column="38" />
               <folding>
                 <element signature="e#89#120#0" expanded="true" />
               </folding>
@@ -72,14 +70,30 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/setup_4.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4590">
-              <caret line="590" selection-start-line="590" selection-end-line="590" />
+            <state relative-caret-position="815">
+              <caret line="1102" column="23" lean-forward="true" selection-start-line="1102" selection-start-column="23" selection-end-line="1102" selection-end-column="23" />
               <folding>
                 <element signature="e#45#76#0" expanded="true" />
+                <element signature="e#653#1840#0" />
+                <element signature="e#1907#2551#0" />
+                <element signature="e#2666#3059#0" />
                 <element signature="e#3176#16301#0" />
                 <element signature="e#16428#29628#0" />
+                <element signature="e#42287#43005#0" />
+                <element signature="e#43055#43803#0" />
+                <element signature="e#43870#48319#0" />
+                <element signature="e#48383#51344#0" />
               </folding>
             </state>
           </provider>
@@ -114,9 +128,10 @@
         <option value="$PROJECT_DIR$/src/setup_1.py" />
         <option value="$PROJECT_DIR$/src/Plot_results/2/setup_2.py" />
         <option value="$PROJECT_DIR$/src/setup_3.py" />
+        <option value="$PROJECT_DIR$/src/setup_4.py" />
+        <option value="$PROJECT_DIR$/src/setup_2.py" />
         <option value="$PROJECT_DIR$/src/create_setup.py" />
         <option value="$PROJECT_DIR$/src/Graph.py" />
-        <option value="$PROJECT_DIR$/src/setup_2.py" />
       </list>
     </option>
   </component>
@@ -185,28 +200,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.setup_2 (1)">
-    <configuration name="random_experiments" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="aa290_MRPP" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/random_experiments.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.setup_4">
     <configuration name="setup_1 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="aa290_MRPP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -291,13 +285,34 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="setup_4" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="aa290_MRPP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/setup_4.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.setup_4" />
         <item itemvalue="Python.setup_2 (1)" />
         <item itemvalue="Python.setup_2" />
         <item itemvalue="Python.setup_1 (1)" />
         <item itemvalue="Python.setup_1" />
-        <item itemvalue="Python.random_experiments" />
       </list>
     </recent_temporary>
   </component>
@@ -316,6 +331,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="148" y="24" width="1162" height="1416" extended-state="4" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12467077" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -393,35 +409,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/setup_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="140" column="38" selection-start-line="140" selection-start-column="38" selection-end-line="140" selection-end-column="38" />
+          <folding>
+            <element signature="e#89#120#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/create_setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1313">
-          <caret line="88" column="31" selection-start-line="88" selection-start-column="31" selection-end-line="88" selection-end-column="31" />
+        <state relative-caret-position="230">
+          <caret line="131" column="32" selection-start-line="131" selection-start-column="32" selection-end-line="131" selection-end-column="32" />
           <folding>
             <element signature="e#49#80#0" expanded="true" />
-            <element signature="e#3614#5175#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/setup_4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4590">
-          <caret line="590" selection-start-line="590" selection-end-line="590" />
+        <state relative-caret-position="815">
+          <caret line="1102" column="23" lean-forward="true" selection-start-line="1102" selection-start-column="23" selection-end-line="1102" selection-end-column="23" />
           <folding>
             <element signature="e#45#76#0" expanded="true" />
+            <element signature="e#653#1840#0" />
+            <element signature="e#1907#2551#0" />
+            <element signature="e#2666#3059#0" />
             <element signature="e#3176#16301#0" />
             <element signature="e#16428#29628#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/setup_2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
-          <folding>
-            <element signature="e#89#120#0" expanded="true" />
+            <element signature="e#42287#43005#0" />
+            <element signature="e#43055#43803#0" />
+            <element signature="e#43870#48319#0" />
+            <element signature="e#48383#51344#0" />
           </folding>
         </state>
       </provider>

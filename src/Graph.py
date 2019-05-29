@@ -804,16 +804,27 @@ class graph():
 
         objective += np.dot(np.array(X_list_reduced).T,Sigma).dot(X_list_reduced)
 
-        # for dimension in range(sizex):
-        #     if dimension%100 == 0:
-        #         print(dimension, "over", sizex)
-        #
-        #     linearterms = polynomialcoeffs[1+(dimension+1)*sizex:1+(dimension+2)*sizex]
-        #
-        #     try:
-        #         objective += X_list_reduced[dimension+1]*np.dot(linearterms,X_list_reduced)
-        #     except:
-        #         embed()
+        # We also somewhat want to minimize arrival time
+        optimization_coef = 0.05
+        self.y_vars = []
+        for sink_node_idx in sink_dict.keys():
+            num_robots = sink_dict[sink_node_idx]
+
+            # Variable creation and smaller than sink constraint
+            ys = self.m.addVars(time_horizon,lb=0,ub=num_robots+0.1,vtype=GRB.INTEGER,name="ys_sink_node_"+str(sink_node_idx))
+            self.y_vars += [ys]
+
+            self.m.update()
+
+            for t in range(time_horizon-1):
+                objective -= optimization_coef*ys[t] # We take it off because here we minimize instead of maximize
+
+                # Smaller than number of robots constraint:
+                self.m.addConstr(ys[t] <= self.blue_vars[sink_node_idx][t])
+
+                # Increasing constraint:
+                if t < time_horizon-1:
+                    self.m.addConstr(ys[t+1]- ys[t] >= 0)
 
 
         print("Objective created.")
@@ -823,7 +834,7 @@ class graph():
         self.m.setObjective(objective, GRB.MINIMIZE)
         self.m.update()
 
-        self.m.Params.TIME_LIMIT = 720.0
+        self.m.Params.TIME_LIMIT = 100.0
         self.m.update()
 
         print("Model fully defined. Starting optimization")
@@ -1077,3 +1088,21 @@ def create_dense_graph():
     my_graph.add_edges_implicitly_bidirectional(edges)
     my_graph.define_vertices(list_of_vertices)
     return my_graph
+
+def create_factory_route_scenario():
+    """Creates 10x10 grid graph with two big blocks in the middle - 3 routes"""
+    my_graph = graph()
+    list_of_vertices = []
+    edges = []
+    for x in range(1, 11):
+        for y in range(1, 11):
+            list_of_vertices += [((x, y), 1)]
+            if x != 10:
+                right_edge = ((x, y), (x + 1, y), 1, 1)
+                edges += [right_edge]
+            if y != 10:
+                upper_edge = ((x, y), (x, y + 1), 1, 1)
+                edges += [upper_edge]
+    my_graph.add_edges_implicitly_bidirectional(edges)
+    my_graph.define_vertices(list_of_vertices)
+    return mygraph

@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
     #Hyperparameters---
     degree = 1 # Degree of polynomial to fit.
-    num_training_samples = 300 # number of samples to generate before fitting
-    num_testing_samples = 20 # number of samples to test our model on
+    num_training_samples = 500 # number of samples to generate before fitting
+    num_testing_samples = 50 # number of samples to test our model on
 
     # Create graph
     mygraph = create_dense_graph()
@@ -148,13 +148,6 @@ if __name__ == "__main__":
 
     # get coefficients
     polycoeffs = model2.steps[1][1].coef_
-
-    # Find to which terms these correspond to
-    pw = model2.steps[0][1].powers_
-
-    # The above matrix is very sparse. Let's get the non zero coefficients
-    # pwo is such that no matter i, pw[pwo[0][i]][pwo[1][i]] = 1 and all the other terms are 0
-    pwo = pw.nonzero()
 
     sizex = len(X_reduced[0])
 
